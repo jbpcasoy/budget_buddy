@@ -13,8 +13,10 @@ export default function Sidebar() {
     <div>
       {items.map((item) => {
         return (
-          <div>
-            <a href={item.url}>{item.label}</a>
+          <div key={item.label}>
+            <a className='hover:font-medium' href={item.url}>
+              {item.label}
+            </a>
           </div>
         );
       })}
