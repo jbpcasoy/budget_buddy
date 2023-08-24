@@ -12,6 +12,8 @@ export default async function handler(
       return post(req, res);
     case "GET":
       return get(req, res);
+    case "PUT":
+      return put(req, res);
     default:
       return methodNotAllowed(req, res);
   }
@@ -67,6 +69,55 @@ async function get(req: NextApiRequest, res: NextApiResponse) {
 
   try {
     const profile = await APIProfileService.getProfile(session.user?.id);
+    return res.status(200).json({
+      data: profile,
+      error: null,
+    });
+  } catch (error: any) {
+    return res.status(400).json({
+      data: null,
+      error: error.message,
+    });
+  }
+}
+
+async function put(req: NextApiRequest, res: NextApiResponse) {
+  const session = await APISessionService.getSession(req, res);
+  const {
+    city,
+    country,
+    currency,
+    email,
+    firstName,
+    lastName,
+    postalCode,
+    province,
+    street,
+    id,
+    middleName,
+  } = req.body;
+
+  if (!session.user?.id) {
+    return res.status(400).json({
+      data: null,
+      error: "Authentication required",
+    });
+  }
+
+  try {
+    const profile = await APIProfileService.updateProfile(session.user?.id, {
+      city,
+      country,
+      currency,
+      email,
+      firstName,
+      lastName,
+      postalCode,
+      province,
+      street,
+      id,
+      middleName,
+    });
     return res.status(200).json({
       data: profile,
       error: null,

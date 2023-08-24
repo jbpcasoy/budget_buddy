@@ -28,9 +28,30 @@ async function readProfile(id: string) {
   return profile;
 }
 
+export interface UpdateProfileParams {
+  firstName?: string;
+  middleName?: string;
+  lastName?: string;
+  email?: string;
+  country?: string;
+  province?: string;
+  postalCode?: string;
+  city?: string;
+  street?: string;
+  currency?: Currency;
+}
+
+async function updateProfile(id: string, values: UpdateProfileParams) {
+  const profile = await axios.put("/api/profile", values, {
+    params: { id },
+  });
+  return profile;
+}
+
 const ProfileService = {
   createProfile,
   readProfile,
+  updateProfile,
 };
 
 export default ProfileService;

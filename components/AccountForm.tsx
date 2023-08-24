@@ -37,7 +37,7 @@ export default function AccountForm({ profile }: AccountFormProps) {
       if (!profile) {
         return ProfileService.createProfile(values);
       } else {
-        return console.log("update profile");
+        return ProfileService.updateProfile(profile.id, values);
       }
     },
   });
@@ -47,7 +47,7 @@ export default function AccountForm({ profile }: AccountFormProps) {
       <input
         type='text'
         placeholder='First Name'
-        // {...formik.getFieldProps("firstName")}
+        {...formik.getFieldProps("firstName")}
       />
       <input
         type='text'
