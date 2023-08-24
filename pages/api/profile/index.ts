@@ -1,5 +1,6 @@
 import APIProfileService from "@/api_services/APIProfileService";
 import APISessionService from "@/api_services/APISessionService";
+import methodNotAllowed from "@/helpers/methodNotAllowed";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
@@ -9,6 +10,10 @@ export default async function handler(
   switch (req.method) {
     case "POST":
       return post(req, res);
+    case "GET":
+      return get(req, res);
+    default:
+      return methodNotAllowed(req, res);
   }
 }
 
@@ -47,5 +52,29 @@ async function post(req: NextApiRequest, res: NextApiResponse) {
     middleName,
   });
 
-  return res.status(200).json(profile);
+  return res.status(200).json({ data: profile, error: null });
+}
+
+async function get(req: NextApiRequest, res: NextApiResponse) {
+  const session = await APISessionService.getSession(req, res);
+
+  if (!session.user?.id) {
+    return res.status(400).json({
+      data: null,
+      error: "Authentication required",
+    });
+  }
+
+  try {
+    const profile = await APIProfileService.getProfile(session.user?.id);
+    return res.status(200).json({
+      data: profile,
+      error: null,
+    });
+  } catch (error: any) {
+    return res.status(400).json({
+      data: null,
+      error: error.message,
+    });
+  }
 }

@@ -1,25 +1,30 @@
 import ProfileService from "@/services/ProfileService";
-import { Currency } from "@prisma/client";
+import { Currency, Profile } from "@prisma/client";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
-export default function AccountForm() {
+interface AccountFormProps {
+  profile?: Profile;
+}
+
+export default function AccountForm({ profile }: AccountFormProps) {
   const formik = useFormik({
     initialValues: {
-      firstName: "",
-      middleName: "",
-      lastName: "",
-      email: "",
-      country: "",
-      province: "",
-      postalCode: "",
-      city: "",
-      street: "",
-      currency: Currency.PHP,
+      firstName: profile?.firstName ?? "",
+      middleName: profile?.middleName ?? "",
+      lastName: profile?.lastName ?? "",
+      email: profile?.email ?? "",
+      country: profile?.country ?? "",
+      province: profile?.province ?? "",
+      postalCode: profile?.postalCode ?? "",
+      city: profile?.city ?? "",
+      street: profile?.street ?? "",
+      currency: profile?.currency ?? Currency.PHP,
     },
+    enableReinitialize: true,
     validationSchema: Yup.object({
       firstName: Yup.string().required("First Name is required"),
-      middleName: Yup.string(),
+      middleName: Yup.string().notRequired(),
       lastName: Yup.string().required("Last Name is required"),
       email: Yup.string().required("Email is required"),
       country: Yup.string().required("Country is required"),
@@ -29,7 +34,11 @@ export default function AccountForm() {
       street: Yup.string().required("Street is required"),
     }),
     onSubmit: (values) => {
-      ProfileService.createProfile(values);
+      if (!profile) {
+        return ProfileService.createProfile(values);
+      } else {
+        return console.log("update profile");
+      }
     },
   });
 
@@ -38,7 +47,7 @@ export default function AccountForm() {
       <input
         type='text'
         placeholder='First Name'
-        {...formik.getFieldProps("firstName")}
+        // {...formik.getFieldProps("firstName")}
       />
       <input
         type='text'

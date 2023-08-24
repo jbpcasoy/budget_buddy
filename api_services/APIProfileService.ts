@@ -9,8 +9,20 @@ async function postProfile(values: Prisma.ProfileCreateInput) {
   return profile;
 }
 
+async function getProfile(userId: string) {
+  const prisma = new PrismaClient();
+  const profile = await prisma.profile.findUnique({
+    where: {
+      userId,
+    },
+  });
+  await prisma.$disconnect();
+  return profile;
+}
+
 const APIProfileService = {
   postProfile,
+  getProfile,
 };
 
 export default APIProfileService;

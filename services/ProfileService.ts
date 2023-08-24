@@ -16,11 +16,21 @@ export interface CreateProfileParams {
 
 async function createProfile(values: CreateProfileParams) {
   const profile = await axios.post("/api/profile", values);
-  console.log({ profile });
+  return profile;
+}
+
+async function readProfile(id: string) {
+  const profile = await axios.get("/api/profile", {
+    params: {
+      id,
+    },
+  });
+  return profile;
 }
 
 const ProfileService = {
   createProfile,
+  readProfile,
 };
 
 export default ProfileService;
